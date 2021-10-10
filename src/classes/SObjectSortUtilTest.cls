@@ -4,9 +4,10 @@ public class SObjectSortUtilTest {
     private static List<Opportunity> createOpportunities(Integer count) {
         List<Opportunity> opportunities = new List<Opportunity>();
         for (Integer i = 0; i < count; i++) {
+            Integer counter = i + 1;
             opportunities.add(new Opportunity(
-                Name = 'Test Opportunity ' + (i + 1),
-                CloseDate = Date.today().addDays(i + 1),
+                Name = 'Test Opportunity ' + counter,
+                CloseDate = Date.today().addDays(counter),
                 StageName = 'Qualification'
             ));
         }
@@ -17,10 +18,11 @@ public class SObjectSortUtilTest {
     private static List<Account> createAccounts(Integer count) {
         List<Account> accounts = new List<Account>();
         for (Integer i = 0; i < count; i++) {
+            Integer counter = i + 1;
             accounts.add(new Account(
-                Name = 'Test Account ' + (i + 1),
-                ShippingStreet = 'Test Street ' + (i + 1),
-                AnnualRevenue = (i + 1) * 1000
+                Name = 'Test Account ' + counter,
+                ShippingStreet = 'Test Street ' + counter,
+                AnnualRevenue = counter * 1000
             ));
         }
         insert accounts;
@@ -31,9 +33,9 @@ public class SObjectSortUtilTest {
     public static void testSortOneStringParam() {
         List<Account> accounts = createAccounts(5);
 
-        SObjectSortUtil sortUtilDESC = new SObjectSortUtil(accounts);
-        sortUtilDESC.addSortProperty('Name', 'DESC');
-        accounts = sortUtilDESC.sort();
+        accounts = new SObjectSortUtil(accounts)
+            .addSortProperty('Name', 'DESC')
+            .sort();
 
         System.assertEquals('Test Account 5', accounts[0].Name);
         System.assertEquals('Test Account 4', accounts[1].Name);
@@ -41,9 +43,7 @@ public class SObjectSortUtilTest {
         System.assertEquals('Test Account 2', accounts[3].Name);
         System.assertEquals('Test Account 1', accounts[4].Name);
 
-        SObjectSortUtil sortUtilASC = new SObjectSortUtil(accounts);
-        sortUtilASC.addSortProperty('Name');
-        accounts = sortUtilASC.sort();
+        accounts = new SObjectSortUtil(accounts).addSortProperty('Name').sort();
 
         System.assertEquals('Test Account 1', accounts[0].Name);
         System.assertEquals('Test Account 2', accounts[1].Name);
@@ -56,9 +56,9 @@ public class SObjectSortUtilTest {
     public static void testSortOneNumberParam() {
         List<Account> accounts = createAccounts(5);
      
-        SObjectSortUtil sortUtilDESC = new SObjectSortUtil(accounts);
-        sortUtilDESC.addSortProperty('AnnualRevenue', 'DESC');
-        accounts = sortUtilDESC.sort();
+        accounts = new SObjectSortUtil(accounts)
+            .addSortProperty('AnnualRevenue', 'DESC')
+            .sort();
 
         System.assertEquals(5000, accounts[0].AnnualRevenue);
         System.assertEquals(4000, accounts[1].AnnualRevenue);
@@ -66,9 +66,9 @@ public class SObjectSortUtilTest {
         System.assertEquals(2000, accounts[3].AnnualRevenue);
         System.assertEquals(1000, accounts[4].AnnualRevenue);
      
-        SObjectSortUtil sortUtilASC = new SObjectSortUtil(accounts);
-        sortUtilASC.addSortProperty('AnnualRevenue');
-        accounts = sortUtilASC.sort();
+        accounts = new SObjectSortUtil(accounts)
+            .addSortProperty('AnnualRevenue')
+            .sort();
 
         System.assertEquals(1000, accounts[0].AnnualRevenue);
         System.assertEquals(2000, accounts[1].AnnualRevenue);
@@ -81,9 +81,9 @@ public class SObjectSortUtilTest {
     public static void testSortOneDateParam() {
         List<Opportunity> opportunities = createOpportunities(5);
 
-        SObjectSortUtil sortUtilDESC = new SObjectSortUtil(opportunities);
-        sortUtilDESC.addSortProperty('CloseDate', 'DESC');
-        opportunities = sortUtilDESC.sort();
+        opportunities = new SObjectSortUtil(opportunities)
+            .addSortProperty('CloseDate', 'DESC')
+            .sort();
 
         System.assertEquals(Date.today().addDays(5), opportunities[0].CloseDate);
         System.assertEquals(Date.today().addDays(4), opportunities[1].CloseDate);
@@ -91,9 +91,9 @@ public class SObjectSortUtilTest {
         System.assertEquals(Date.today().addDays(2), opportunities[3].CloseDate);
         System.assertEquals(Date.today().addDays(1), opportunities[4].CloseDate);
         
-        SObjectSortUtil sortUtilASC = new SObjectSortUtil(opportunities);
-        sortUtilASC.addSortProperty('CloseDate', 'ASC');
-        opportunities = sortUtilASC.sort();
+        opportunities = new SObjectSortUtil(opportunities)
+            .addSortProperty('CloseDate', 'ASC')
+            .sort();
         
         System.assertEquals(Date.today().addDays(1), opportunities[0].CloseDate);
         System.assertEquals(Date.today().addDays(2), opportunities[1].CloseDate);
@@ -120,9 +120,9 @@ public class SObjectSortUtilTest {
             'Street E' => 0
         };
 
-        SObjectSortUtil sortUtilASC = new SObjectSortUtil(accounts);
-        sortUtilASC.addSortProperty('ShippingStreet', 'ASC', customMap);
-        accounts = sortUtilASC.sort();
+        accounts = new SObjectSortUtil(accounts)
+            .addSortProperty('ShippingStreet', 'ASC', customMap)
+            .sort();
 
         System.assertEquals('Street E', accounts[0].ShippingStreet);
         System.assertEquals('Street D', accounts[1].ShippingStreet);
@@ -130,9 +130,9 @@ public class SObjectSortUtilTest {
         System.assertEquals('Street B', accounts[3].ShippingStreet);
         System.assertEquals('Street A', accounts[4].ShippingStreet);
 
-        SObjectSortUtil sortUtilDESC = new SObjectSortUtil(accounts);
-        sortUtilDESC.addSortProperty('ShippingStreet', 'DESC', customMap);
-        accounts = sortUtilDESC.sort();
+        accounts = new SObjectSortUtil(accounts)
+            .addSortProperty('ShippingStreet', 'DESC', customMap)
+            .sort();
 
         System.assertEquals('Street A', accounts[0].ShippingStreet);
         System.assertEquals('Street B', accounts[1].ShippingStreet);
@@ -157,10 +157,10 @@ public class SObjectSortUtilTest {
         accounts[3].AnnualRevenue = 9000;
         accounts[4].AnnualRevenue = 9000;
 
-        SObjectSortUtil sortUtil = new SObjectSortUtil(accounts);
-        sortUtil.addSortProperty('AnnualRevenue', 'DESC');
-        sortUtil.addSortProperty('ShippingStreet', 'ASC');
-        accounts = sortUtil.sort();
+        accounts = new SObjectSortUtil(accounts)
+            .addSortProperty('AnnualRevenue', 'DESC')
+            .addSortProperty('ShippingStreet', 'ASC')
+            .sort();
 
         System.assertEquals(9000, accounts[0].AnnualRevenue);
         System.assertEquals(9000, accounts[1].AnnualRevenue);

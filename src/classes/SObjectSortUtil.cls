@@ -8,19 +8,20 @@ public class SObjectSortUtil {
         this.listToSort = listToSort;
     }
 
-    public void addSortProperty(String propertyName) {
-        this.addSortProperty(propertyName, 'ASC', null);
+    public SObjectSortUtil addSortProperty(String propertyName) {
+        return this.addSortProperty(propertyName, 'ASC', null);
     }
 
-    public void addSortProperty(String propertyName, String sortOrder) {
-        this.addSortProperty(propertyName, sortOrder, null);
+    public SObjectSortUtil addSortProperty(String propertyName, String sortOrder) {
+        return this.addSortProperty(propertyName, sortOrder, null);
     }
     
-    public void addSortProperty(String propertyName, String sortOrder, Map<String, Integer> customValueMap) {
+    public SObjectSortUtil addSortProperty(String propertyName, String sortOrder, Map<String, Integer> customValueMap) {
         if (sortOrder != 'DESC') {
             sortOrder = 'ASC'; // set default
         }
         sortProperties.add(new SortProperty(propertyName, sortOrder, customValueMap));
+        return this;
     }
 
     public List<SObject> sort() {
